@@ -1,4 +1,4 @@
-const buildService = require('../services/build-service.js');
+const buildService = require('../services/build-mongodb.js');
 
 exports.getBuilds=(req, res)=>{
     buildService
