@@ -1,13 +1,12 @@
 const db = require('../configs/mongodb.js').getDB();
 const ObjectId = require('mongodb').ObjectID;
 
-
 exports.getBuilds = () => {
     return new Promise((resolve, reject) => {
         db
             .collection('builds')
             .find()
-            .project({ 'title': 1, 'author': 1 })
+            .project({ title: 1, author: 1 })
             .toArray()
             .then(builds => resolve(builds))
             .catch(err => reject(err));
@@ -17,9 +16,24 @@ exports.getBuilds = () => {
 exports.getBuild = id => {
     return new Promise((resolve, reject) => {
         db
-            .collection('build')
+            .collection('builds')
             .findOne({ _id: ObjectId(id) })
             .then(build => resolve(build))
+            .catch(err => reject(err));
+    });
+};
+
+exports.insertBuild = body => {
+    return new Promise((resolve, reject) => {
+        db
+            .collection('builds')
+            .insertOne({
+                title: body.title,
+                collection: body.collection,
+                author: body.author,
+                publish_year: body.publish_year,
+            })
+            .then(res => resolve({ inserted: 1, _id: res.insertedId }))
             .catch(err => reject(err));
     });
 };
@@ -38,27 +52,17 @@ exports.updateBuild = (id, body) => {
                         publish_year: body.publish_year,
                     }
                 })
-            .then(() => resolve({ updated: 1 }))
+            .then(() => resolve({ updated: 1}))
             .catch(err => reject(err));
     });
 };
 
-exports.removeBuild = (id, body) => {
+exports.removeBuild = (id) => {
     return new Promise((resolve, reject) => {
         db
             .collection('builds')
-            .deleteOne({_id: ObjectId(id) })
-            .then(() => resolve({ removed: 1 }))
-            .catch(err => reject(err));
-    });
-};
-
-exports.insertBuild = body => {
-    return new Promise((resolve, reject) => {
-        db
-            .collection('builds')
-            .insertOne({ title: body.title, collection: body.collection, author: body.author, publish_year: body.publish_year })
-            .then(res => resolve({ inserted: 1, _id: res.insertedId }))
+            .deleteOne({ _id: ObjectId(id) })
+            .then (() => resolve({ removed: 1}))
             .catch(err => reject(err));
     });
 };

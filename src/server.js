@@ -1,6 +1,9 @@
-require('./configs/mongodb.js').connectDB()
+require('./configs/mongodb.js')
+    .connectDB()
     .then(() => {
-        console.log('Connected successfully to database server');
+        console.log(
+            `\x1b[32m(PLAIN) Connected successfully to database server\x1b[0m.`
+        );
 
         const express = require("express");
         const bodyParser = require("body-parser");
@@ -22,6 +25,6 @@ require('./configs/mongodb.js').connectDB()
         });
 
     })
-    .catch(err => {
+    .catch((err) => {
         console.error('Unable to connect to databse server :', err.message);
     });
