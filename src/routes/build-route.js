@@ -1,10 +1,13 @@
+const buildController = require('../controllers/build-controller');
 const router = require("express").Router();
-const buildController = require('../controllers/build-controller.js');
 
-router.get('', buildController.getBuilds);
-router.get('/:id', buildController.getBuild);
-router.post('', buildController.insertBuild);
-router.put('/:id', buildController.updateBuild);
-router.delete('/:id', buildController.removeBuild);
+const authorize = require('../configs/authorization');
+const roles = require('../helpers/roles.js');
+
+router.get('', authorize(), buildController.getBuilds);
+router.get('/:id', authorize(), buildController.getBuild);
+router.post('', authorize(roles.Boss), buildController.insertBuild);
+router.put('/:id', authorize(roles.Boss), buildController.updateBuild);
+router.delete('/:id', authorize(roles.Boss), buildController.removeBuild);
 
 module.exports = router;

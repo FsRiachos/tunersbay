@@ -9,15 +9,13 @@ require('./configs/mongodb.js')
         const bodyParser = require("body-parser");
         const cors = require('cors');
 
-        const buildRoute = require('./routes/build-route.js');
-
         const app = express();
 
         app.use(bodyParser.json());
         app.use(cors());
 
-        app.use("/hello", (req, res) => res.send('HELLO WORLD'));
-        app.use('/build', buildRoute);
+        app.use('/build', require('./routes/build-route.js'));
+        app.use('/user', require('./routes/user-route.js'));
 
         const port = process.env.port || 3000;
         app.listen(port, () => {
