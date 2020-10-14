@@ -36,3 +36,36 @@ exports.authenticate = (username, rawPassword) => {
             .catch((error) => reject(error));
     });
 };
+
+exports.getBuilds = (userId) => {
+    return new Promise((resolve, reject) => {
+        db.collection("users")
+            .findOne({ _id: ObjectId(userId) })
+            .then((user) => {
+                if (user.builds) {
+                    return db.collection("builds")
+                        .find({ _id: { $in: user.builds } })
+                        .project({ title: 1, author: 1 })
+                        .toArray();
+                } else return [];
+            })
+            .then((builds) => resolve(builds))
+            .catch((err) => reject(err));
+    });
+};
+exports.addBuild = (userId, buildId) => {
+    return new Promise((resolve, reject) => {
+        db.collection("users")
+            .updateOne({ _id: ObjectId(userId) }, { $push: { builds: ObjectId(buildId) } })
+            .then(() => resolve())
+            .catch((err) => reject(err));
+    });
+};
+exports.removeBuild = (userId, buildId) => {
+    return new Promise((resolve, reject) => {
+        db.collection("users")
+            .updateOne({ _id: ObjectId(userId) }, { $pull: { builds: ObjectId(buildId) } })
+            .then(() => resolve())
+            .catch((err) => reject(err));
+    });
+};
